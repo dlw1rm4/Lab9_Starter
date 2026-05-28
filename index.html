@@ -162,17 +162,19 @@
       console.trace();
     });
 
+    window.onerror = function (message, source, lineno, colno, error) {
+      console.log(
+        `[window.onerror] Caught global error:\n` + 
+        `Message: ${message}\n` +
+        `Source: ${source}\n` +
+        `Line: ${lineno}\n, col: ${colno}\n` +
+        `Error object: ${error}`
+    )};
+
     errorBtns[14].addEventListener('click', () => {
-      try {
-        const userId = -1;
-        if (userId < 0) {
-          throw new RangeError(`Invalid user ID: ${userId}`);
-        }
-      } catch (err) {
-        console.error('Global error caught:', err);
-        throw err;
-      } finally {
-        console.log('finally: runs before re-throw propogates up');
+      const userId = -1;
+      if (userId < 0) {
+        throw new RangeError(`Invalid user ID: ${userId}`);
       }
     });
 
