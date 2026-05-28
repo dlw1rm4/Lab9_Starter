@@ -101,6 +101,104 @@
     let errorBtns = Array.from(document.querySelectorAll('#error-btns > button'));
 
     // Start your code here
+    errorBtns[0].addEventListener('click', () => {
+      console.log('Console Log Demo');
+    });
+
+    errorBtns[1].addEventListener('click', () => {
+      console.error('This is a console error message.');
+    });
+
+    errorBtns[2].addEventListener('click', () => {
+      console.count('This is a console count');
+    });
+
+    errorBtns[3].addEventListener('click', () => {
+      console.warn('This is a console warning message.');
+    });
+
+    errorBtns[4].addEventListener('click', () => {
+      console.assert(false, 'This is a console assert message.');
+    });
+
+    errorBtns[5].addEventListener('click', () => {
+      console.clear();
+    });
+
+    errorBtns[6].addEventListener('click', () => {
+      console.dir(document.body);
+    });
+
+    errorBtns[7].addEventListener('click', () => {
+      console.dirxml(document.body);
+    });
+
+    errorBtns[8].addEventListener('click', () => {
+      console.group('Console Group Start');
+    });
+
+    errorBtns[9].addEventListener('click', () => {
+      console.groupEnd();
+    });
+
+    errorBtns[10].addEventListener('click', () => {
+      console.table([{ name: 'John', age: 30 }, { name: 'Jane', age: 25 }]);
+    });
+
+    errorBtns[11].addEventListener('click', () => {
+      console.time('Timer');
+    });
+
+    errorBtns[12].addEventListener('click', () => {
+      console.timeEnd('Timer');
+    });
+
+    errorBtns[13].addEventListener('click', () => {
+      console.trace();
+    });
+
+    errorBtns[14].addEventListener('click', () => {
+      try {
+        const userId = -1;
+        if (userId < 0) {
+          throw new RangeError(`Invalid user ID: ${userId}`);
+        }
+      } catch (err) {
+        console.error('Global error caught:', err);
+        throw err;
+      } finally {
+        console.log('finally: runs before re-throw propogates up');
+      }
+    });
+
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+
+      try {
+        let output = document.querySelector('output');
+        let firstNum = document.querySelector('#first-num').value;
+        let secondNum = document.querySelector('#second-num').value;
+        let operator = document.querySelector('#operator').value;
+
+        if (operator === '/' && Number(secondNum) === 0) {
+          throw new RangeError('Division by zero is not allowed.');
+        }
+
+        let result = eval(`${firstNum} ${operator} ${secondNum}`);
+
+        if (isNaN(result)) {
+          throw new TypeError('Input must be valid numbers');
+        }
+
+        output.innerHTML = result;
+        
+      } catch (err) {
+        console.error('Calculator error caught:', err);
+        document.querySelector('output').innerHTML = `Error: ${err.message}`;
+      } finally {
+        console.log('finally: calculation attempt finished regardless of outcome');x
+      }
+    });
     // You may move this JS to another file if you wish
   </script>
 </body>
