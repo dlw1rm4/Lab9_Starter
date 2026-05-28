@@ -86,18 +86,23 @@
       <button>Trigger a Global Error</button>
     </section>
   </main>
-
   <script>
-    let form = document.querySelector('form');
-    form.addEventListener('submit', e => {
-      e.preventDefault();
-      let output = document.querySelector('output');
-      let firstNum = document.querySelector('#first-num').value;
-      let secondNum = document.querySelector('#second-num').value;
-      let operator = document.querySelector('#operator').value;
-      output.innerHTML = eval(`${firstNum} ${operator} ${secondNum}`);
-    });
+    class ValidationError extends Error{
+      constructor(message, field) {
+        super(message);
+        this.name = "ValidationError";
+        this.field = field;
+      }
+    }
 
+    class MathError extends Error {
+      constructor(message, operation) {
+        super(message);
+        this.name = "MathError";
+        this.operation = operation;
+      }
+    }
+    let form = document.querySelector('form');
     let errorBtns = Array.from(document.querySelectorAll('#error-btns > button'));
 
     // Start your code here
@@ -175,28 +180,37 @@
       e.preventDefault();
 
       try {
-        let output = document.querySelector('output');
         let firstNum = document.querySelector('#first-num').value;
         let secondNum = document.querySelector('#second-num').value;
         let operator = document.querySelector('#operator').value;
 
-        if (operator === '/' && Number(secondNum) === 0) {
-          throw new RangeError('Division by zero is not allowed.');
+        if (firstNum === '' || secondNum === '') {
+          throw new ValidationError('Both numbers must be provided', 'first-num or second-num');
         }
-
-        let result = eval(`${firstNum} ${operator} ${secondNum}`);
-
-        if (isNaN(result)) {
+        if (isNaN(firstNum) || isNaN(secondNum)) {
           throw new TypeError('Input must be valid numbers');
         }
 
-        output.innerHTML = result;
-        
+        if (operator === '/' && Number(secondNum) === 0) {
+          throw new MathError('Division by zero is not allowed.', `${firstNum} / ${secondNum}`);
+        }
+
+        let result = eval(`${firstNum} ${operator} ${secondNum}`);
+        document.querySelector('output').innerHTML = result;
+
       } catch (err) {
-        console.error('Calculator error caught:', err);
-        document.querySelector('output').innerHTML = `Error: ${err.message}`;
+        if (err instanceof ValidationError) {
+          console.error(`[${err.name}] Field: "${err.field}": ${err.message}`);
+          document.querySelector('output').innerHTML = `Validation: ${err.message}`;
+        } else if (err instanceof MathError) {
+          console.error(`[${err.name}] Operation: "${err.operation}": ${err.message}`);
+          document.querySelector('output').innerHTML = `Math Error: ${err.message}`;
+        } else {
+          console.error('Unexpected error caught:', err);
+          document.querySelector('output').innerHTML = 'Unexpected Error';
+        }
       } finally {
-        console.log('finally: calculation attempt finished regardless of outcome');x
+        console.log('finally: ran after');
       }
     });
     // You may move this JS to another file if you wish
