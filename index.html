@@ -86,6 +86,13 @@
       <button>Trigger a Global Error</button>
     </section>
   </main>
+  <script src="https://cdn.trackjs.com/agent/v3/latest/t.js"></script>
+  <script>
+    window.TrackJS && TrackJS.install({ 
+      token: "59b23819d3a541fb81b07502daa25945"
+      // for more configuration options, see https://docs.trackjs.com
+    });
+  </script>
   <script>
     class ValidationError extends Error{
       constructor(message, field) {
@@ -162,6 +169,7 @@
       console.trace();
     });
 
+    const _prevOnError = window.onerror;
     window.onerror = function (message, source, lineno, colno, error) {
       console.log(
         `[window.onerror] Caught global error:\n` + 
@@ -169,7 +177,11 @@
         `Source: ${source}\n` +
         `Line: ${lineno}\n, col: ${colno}\n` +
         `Error object: ${error}`
-    )};
+    );
+    if (_prevOnError) {
+      return _prevOnError(message, source, lineno, colno, error);
+    }
+  };
 
     errorBtns[14].addEventListener('click', () => {
       const userId = -1;
